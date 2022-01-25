@@ -194,7 +194,6 @@ public class MazeViewer extends JFrame {
 					displayStats(searcher);
 					long end = System.currentTimeMillis();
 					System.out.println("Time:  " + ((end - start)/1000.00));
-					Toolkit.getDefaultToolkit().beep();
 				} else {
 					JOptionPane.showMessageDialog(MazeViewer.this, "Sorry, no solution found.");
 				}
