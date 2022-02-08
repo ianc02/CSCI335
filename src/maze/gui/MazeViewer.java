@@ -184,16 +184,12 @@ public class MazeViewer extends JFrame {
             try {
 				ToIntFunction<MazeExplorer> bfh = heuristics.newInstanceOf(heuristicChooser.getSelectedItem().toString());
 				MazeSearcher searcher = new MazeSearcher(bfh);
-                long start = System.currentTimeMillis();
 				searcher.solve(new MazeExplorer(m, m.getStart()));
 				if (searcher.success()) {
-
 					path = new MazePath(searcher.getResult().get(), m);
 					mp.setPath(path);
 					mp.repaint();
 					displayStats(searcher);
-					long end = System.currentTimeMillis();
-					System.out.println("Time:  " + ((end - start)/1000.00));
 				} else {
 					JOptionPane.showMessageDialog(MazeViewer.this, "Sorry, no solution found.");
 				}
