@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 
 @SuppressWarnings("rawtypes")
 public class AIReflector<T> {
@@ -77,5 +80,14 @@ public class AIReflector<T> {
 
 	public T newInstanceOf(String typeName) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		return name2type.get(typeName).getDeclaredConstructor().newInstance();
+	}
+
+	public Optional<T> optionalInstanceOf(String typeName) {
+		try {
+			return Optional.of(newInstanceOf(typeName));
+		} catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+			e.printStackTrace();
+			return Optional.empty();
+		}
 	}
 }

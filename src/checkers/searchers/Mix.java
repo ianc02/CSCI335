@@ -66,14 +66,17 @@ public class Mix extends CheckersSearcher {
             numberOfEvals++;
             Optional<Duple<Integer, Move>> recursiveResult = Optional.empty();
             if (futureBoard.getCurrentPlayer() == adversary) {
-                recursiveResult = selectMoveHelper(protagonist, 0,futureBoard, depth + 1, -recursiveBeta, -recursiveAlpha);
+                recursiveResult = selectMoveHelper(protagonist, 0,futureBoard, depth + 1, recursiveAlpha, recursiveBeta);
                 if (recursiveResult.isPresent()) {
                     totalEval+=recursiveResult.get().getFirst();
                     usedBoardsEval.put(futureBoard,recursiveResult.get().getFirst());
                     usedBoardsAlpha.put(futureBoard,-recursiveBeta);
                     usedBoardsBeta.put(futureBoard, -recursiveAlpha);
-                    if (returnDuple.isEmpty() || recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
+                    if (returnDuple.isEmpty() || -recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
                         returnDuple = Optional.of(new Duple<Integer, Move>(-recursiveResult.get().getFirst(), futureBoard.getLastMove()));
+                    }
+                    if (recursiveResult.get().getFirst() < recursiveBeta){
+                        recursiveBeta = recursiveResult.get().getFirst();
                     }
                 }
             } else {
@@ -86,14 +89,15 @@ public class Mix extends CheckersSearcher {
                     if (returnDuple.isEmpty() || recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
                         returnDuple = Optional.of(new Duple<Integer, Move>(recursiveResult.get().getFirst(), futureBoard.getLastMove()));
                     }
+                    if (recursiveResult.get().getFirst() > recursiveAlpha){
+                        recursiveAlpha = recursiveResult.get().getFirst();
+                    }
                 }
             }
-            if (recursiveResult.isPresent()) {
-                recursiveAlpha = Math.max(recursiveAlpha, recursiveResult.get().getFirst());
                 if (recursiveAlpha >= recursiveBeta) {
                     break;
                 }
-            }
+
         }
         Optional<Duple<Integer,Move>> possibleReturnDuple = Optional.empty();
         float average = (float)totalEval/numberOfEvals;

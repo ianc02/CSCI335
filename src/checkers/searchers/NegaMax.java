@@ -59,7 +59,7 @@ public class NegaMax extends CheckersSearcher {
             Optional<Duple<Integer, Move>> recursiveResult = selectMoveHelper(futureBoard, depth + 1);
             if (recursiveResult.isPresent()) {
                 if (futureBoard.getCurrentPlayer() == adversary) {
-                    if (returnDuple.isEmpty() || recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
+                    if (returnDuple.isEmpty() || -recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
                         returnDuple = Optional.of(new Duple<Integer, Move>(-recursiveResult.get().getFirst(), futureBoard.getLastMove()));
                     }
                 } else {

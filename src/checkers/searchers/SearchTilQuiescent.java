@@ -62,10 +62,13 @@ public class SearchTilQuiescent extends CheckersSearcher {
             numNodes += 1;
             Optional<Duple<Integer, Move>> recursiveResult = Optional.empty();
             if (futureBoard.getCurrentPlayer() == adversary) {
-                recursiveResult = selectMoveHelper(protagonist, futureBoard, depth + 1, -recursiveBeta, -recursiveAlpha);
+                recursiveResult = selectMoveHelper(protagonist, futureBoard, depth + 1, recursiveAlpha, recursiveBeta);
                 if (recursiveResult.isPresent()) {
-                    if (returnDuple.isEmpty() || recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
+                    if (returnDuple.isEmpty() || -recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
                         returnDuple = Optional.of(new Duple<Integer, Move>(-recursiveResult.get().getFirst(), futureBoard.getLastMove()));
+                    }
+                    if (recursiveResult.get().getFirst() < recursiveBeta){
+                        recursiveBeta = recursiveResult.get().getFirst();
                     }
                 }
             } else {
@@ -74,14 +77,14 @@ public class SearchTilQuiescent extends CheckersSearcher {
                     if (returnDuple.isEmpty() || recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
                         returnDuple = Optional.of(new Duple<Integer, Move>(recursiveResult.get().getFirst(), futureBoard.getLastMove()));
                     }
+                    if (recursiveResult.get().getFirst() > recursiveAlpha){
+                        recursiveAlpha = recursiveResult.get().getFirst();
+                    }
                 }
             }
-            if (recursiveResult.isPresent()) {
-                recursiveAlpha = Math.max(recursiveAlpha, recursiveResult.get().getFirst());
                 if (recursiveAlpha >= recursiveBeta) {
                     break;
                 }
-            }
         }
         return returnDuple;
     }

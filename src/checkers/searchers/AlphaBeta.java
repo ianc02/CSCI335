@@ -39,7 +39,6 @@ public class AlphaBeta extends CheckersSearcher {
         PlayerColor protagonist = board.getCurrentPlayer();
         PlayerColor adversary = protagonist.opponent();
         ArrayList<Checkerboard> moves = board.getNextBoards();
-        int max = lose;
         Optional<Duple<Integer, Move>> returnDuple = Optional.empty();
         if (board.gameOver()) {
             if (board.playerWins(protagonist)) {
@@ -58,10 +57,13 @@ public class AlphaBeta extends CheckersSearcher {
             numNodes += 1;
             Optional<Duple<Integer, Move>> recursiveResult = Optional.empty();
                 if (futureBoard.getCurrentPlayer() == adversary) {
-                    recursiveResult = selectMoveHelper(futureBoard, depth + 1, -recursiveBeta, -recursiveAlpha);
+                    recursiveResult = selectMoveHelper(futureBoard, depth + 1, recursiveAlpha, recursiveBeta);
                     if (recursiveResult.isPresent()) {
-                        if (returnDuple.isEmpty() || recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
+                        if (returnDuple.isEmpty() || -recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
                             returnDuple = Optional.of(new Duple<Integer, Move>(-recursiveResult.get().getFirst(), futureBoard.getLastMove()));
+                        }
+                        if (recursiveResult.get().getFirst() < recursiveBeta){
+                            recursiveBeta = recursiveResult.get().getFirst();
                         }
                     }
                 } else {
@@ -70,13 +72,14 @@ public class AlphaBeta extends CheckersSearcher {
                         if (returnDuple.isEmpty() || recursiveResult.get().getFirst() > returnDuple.get().getFirst()) {
                             returnDuple = Optional.of(new Duple<Integer, Move>(recursiveResult.get().getFirst(), futureBoard.getLastMove()));
                         }
+                        if (recursiveResult.get().getFirst() > recursiveAlpha){
+                            recursiveAlpha = recursiveResult.get().getFirst();
+                        }
                     }
                 }
-                if (recursiveResult.isPresent()) {
-                recursiveAlpha = Math.max(recursiveAlpha, recursiveResult.get().getFirst());
                 if (recursiveAlpha >= recursiveBeta) {
                     break;
-                }
+
             }
         }
         return returnDuple;
