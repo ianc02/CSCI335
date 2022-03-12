@@ -51,6 +51,7 @@ public class SentimentAnalyzer {
         HashSet<Duple<String,Integer>> features = new HashSet<>();
         for (Duple<Histogram<String>,String> datum: data) {
             for (String key: datum.getFirst()) {
+                features.add(new Duple<>(key, 0));
                 features.add(new Duple<>(key, datum.getFirst().getCountFor(key)));
             }
         }

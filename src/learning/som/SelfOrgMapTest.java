@@ -67,6 +67,7 @@ public class SelfOrgMapTest {
         assertEquals(0.5, SelfOrgMap.effectiveLearningRate(0.5, 1.0), 0.001);
         assertEquals(0.25, SelfOrgMap.effectiveLearningRate(0.5, 2.0), 0.001);
         assertEquals(0.24, SelfOrgMap.effectiveLearningRate(0.6, 2.5), 0.001);
+        assertEquals(1.0, SelfOrgMap.effectiveLearningRate(1.0, 0.0), 0.001);
     }
 
     @Test
