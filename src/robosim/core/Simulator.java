@@ -13,6 +13,7 @@ public class Simulator {
 	private Robot bot;
 	private double width, height;
 	private boolean wasHit;
+	private boolean vaccumed;
 	private Histogram<String> stats;
 	
 	public Simulator(double width, double height) {
@@ -31,6 +32,7 @@ public class Simulator {
 	
 	public void reset() {
 		wasHit = false;
+		vaccumed = false;
 		stats = new Histogram<>();
 	}
 	
@@ -70,6 +72,7 @@ public class Simulator {
 	
 	public void move() {
 		wasHit = false;
+		vaccumed = false;
 		bot.update();
 		if (isColliding()) {
 			wasHit = true;
@@ -78,6 +81,7 @@ public class Simulator {
 			map.vaccuumed(bot).ifPresent(dirt -> {
 				map.remove(dirt);
 				stats.bump("Dirt");
+				vaccumed = true;
 			});
 		}
 		stats.bump(wasHit ? "Collisions" : getAngularVelocity() == 0 && getTranslationalVelocity() > 0 ? "Forward" : "Other");
@@ -92,6 +96,7 @@ public class Simulator {
 	public int getDirt() {return stats.getCountFor("Dirt");}
 	
 	public boolean wasHit() {return wasHit;}
+	public boolean isVaccumed(){return vaccumed;}
 	
 	public boolean isColliding() {
 		return !inBounds(bot) || map.isColliding(bot);
@@ -109,6 +114,13 @@ public class Simulator {
 				.map(Duple::getSecond).min(Comparator.comparingDouble(Polar::getR));
 	}
 
+	public Optional<Polar> findClosestDirt() {
+		return allVisibleObjects().stream()
+				.filter(o -> o.getFirst().isVacuumable())
+				.map(Duple::getSecond).min(Comparator.comparingDouble(Polar::getR));
+
+	}
+
 	public ArrayList<Duple<SimObject,Polar>> allVisibleObjects() {
 		return map.visibleObjects(bot);
 	}
@@ -123,7 +135,9 @@ public class Simulator {
 	private double oneD(double where, double part, double dimSize) {
 		return Math.abs((part >= 0 ? dimSize - where : where) / part);
 	}
-
+	public Robot getBot(){
+		return bot;
+	}
 	public String getMapString() {
 		return map.toString();
 	}
