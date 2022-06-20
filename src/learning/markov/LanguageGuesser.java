@@ -53,7 +53,7 @@ public class LanguageGuesser extends JFrame {
             if (choice == JFileChooser.APPROVE_OPTION) {
                 try {
                     File f = chooser.getSelectedFile();
-                    String language = JOptionPane.showInputDialog("Enter language");
+                    String language = JOptionPane.showInputDialog("Enter type");
                     chain.countFrom(f, language);
                     refreshOutput();
                 } catch (IOException e) {
