@@ -32,7 +32,7 @@ public class MarkovLanguage extends MarkovChain<String,Character> {
         if (Character.isSpaceChar(c)) {
             c = ' ';
         }
-        if (Character.isAlphabetic(c) || c == ' ') {
+        if (Character.isAlphabetic(c) || Character.isDigit(c) || c == ' ') {
             return Optional.of(c);
         } else {
             return Optional.empty();
